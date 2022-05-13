@@ -1,11 +1,16 @@
 package cn.limitless.wingsmusic.filter;
 
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.limitless.wingsmusic.config.WebSecurityConfig;
 import cn.limitless.wingsmusic.entity.User;
+import cn.limitless.wingsmusic.exception.BizException;
+import cn.limitless.wingsmusic.exception.ExceptionType;
 import cn.limitless.wingsmusic.service.UserService;
+import cn.limitless.wingsmusic.utils.RedisCache;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,6 +36,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final UserService userService;
 
+    private RedisCache redisCache;
+
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager,
                                   UserService userService) {
@@ -41,10 +48,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String header = request.getHeader(WebSecurityConfig.HEADER_STRING);
-
         if (header == null || !header.startsWith(WebSecurityConfig.TOKEN_PREFIX)) {
             chain.doFilter(request, response);
             return;
+        }
+        User user = this.redisCache.getCacheObject(header);
+
+        if (ObjectUtil.isNull(user)) {
+            throw new BizException(ExceptionType.UNAUTHORIZED);
         }
         UsernamePasswordAuthenticationToken authenticationToken = this.getAuthentication(header);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -59,10 +70,16 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                     .verify(header.replace(WebSecurityConfig.TOKEN_PREFIX, ""))
                     .getSubject();
             if (username != null) {
-                User user = userService.loadUserByUsername(username);
+                /*             User user = userService.loadUserByUsername(username);*/
+                User user = this.redisCache.getCacheObject(username);
                 return new UsernamePasswordAuthenticationToken(username, null, user.getAuthorities());
             }
         }
         return null;
+    }
+
+    @Autowired
+    public void setRedisCache(RedisCache redisCache) {
+        this.redisCache = redisCache;
     }
 }

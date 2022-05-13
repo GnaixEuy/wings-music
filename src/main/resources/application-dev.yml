@@ -9,6 +9,17 @@ spring:
       username: ${DATABASE_USERNAME}
       password: ${DATABASE_PASSWORD}
       url: jdbc:${DATABASE_TYPE}://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?characterEncoding=UTF8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-    flyway:
-      enabled: true
-      encoding: UTF-8
+  flyway:
+    enabled: true
+    encoding: UTF-8
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password:
+    timeout: 10S
+    lettuce:
+      pool:
+        min-idle: 0
+        max-idle: 8
+        max-active: 8
+        max-wait: -1ms
