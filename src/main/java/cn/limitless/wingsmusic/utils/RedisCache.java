@@ -1,5 +1,8 @@
 package cn.limitless.wingsmusic.utils;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.HashOperations;
@@ -20,6 +23,9 @@ import java.util.concurrent.TimeUnit;
  * @see <a href="https://github.com/GnaixEuy"> GnaixEuy的GitHub </a>
  */
 @Component
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 @SuppressWarnings(value = {"unchecked", "rawtypes"})
 public class RedisCache {
     public RedisTemplate redisTemplate;

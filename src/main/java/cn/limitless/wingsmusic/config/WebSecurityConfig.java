@@ -3,6 +3,7 @@ package cn.limitless.wingsmusic.config;
 import cn.limitless.wingsmusic.exception.RestAuthenticationEntryPoint;
 import cn.limitless.wingsmusic.filter.JwtAuthorizationFilter;
 import cn.limitless.wingsmusic.service.UserService;
+import cn.limitless.wingsmusic.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -35,6 +36,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private UserService userService;
 
+    private RedisCache redisCache;
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -43,7 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(CREATE_TOKEN_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JwtAuthorizationFilter(super.authenticationManager(), userService))
+                .addFilter(new JwtAuthorizationFilter(super.authenticationManager(), this.userService, this.redisCache))
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -54,7 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/swagger**/**")
                 .antMatchers("/webjars/**")
                 .antMatchers("/v3/**")
-                .antMatchers("/user/**")
+//                .antMatchers("/user/**")
                 .antMatchers("/doc.html");
     }
 
@@ -73,6 +76,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
     }
 
+    @Autowired
+    public void setRedisCache(RedisCache redisCache) {
+        this.redisCache = redisCache;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

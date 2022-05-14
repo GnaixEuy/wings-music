@@ -10,7 +10,6 @@ import cn.limitless.wingsmusic.service.UserService;
 import cn.limitless.wingsmusic.utils.RedisCache;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,14 +34,15 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final UserService userService;
-
-    private RedisCache redisCache;
+    private final RedisCache redisCache;
 
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager,
-                                  UserService userService) {
+                                  UserService userService,
+                                  RedisCache redisCache) {
         super(authenticationManager);
         this.userService = userService;
+        this.redisCache = redisCache;
     }
 
     @Override
@@ -52,8 +52,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             chain.doFilter(request, response);
             return;
         }
-        User user = this.redisCache.getCacheObject(header);
-
+        System.out.println(header);
+        User user = this.redisCache.getCacheObject(header.replace("Bearer ", ""));
         if (ObjectUtil.isNull(user)) {
             throw new BizException(ExceptionType.UNAUTHORIZED);
         }
@@ -70,16 +70,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                     .verify(header.replace(WebSecurityConfig.TOKEN_PREFIX, ""))
                     .getSubject();
             if (username != null) {
-                /*             User user = userService.loadUserByUsername(username);*/
-                User user = this.redisCache.getCacheObject(username);
+                User user = this.redisCache.getCacheObject(header.replace("Bearer ", ""));
                 return new UsernamePasswordAuthenticationToken(username, null, user.getAuthorities());
             }
         }
         return null;
-    }
-
-    @Autowired
-    public void setRedisCache(RedisCache redisCache) {
-        this.redisCache = redisCache;
     }
 }
