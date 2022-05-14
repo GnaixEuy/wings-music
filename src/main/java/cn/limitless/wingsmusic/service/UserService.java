@@ -1,6 +1,7 @@
 package cn.limitless.wingsmusic.service;
 
 import cn.limitless.wingsmusic.dto.token.TokenCreateRequest;
+import cn.limitless.wingsmusic.dto.user.UserCreateRequest;
 import cn.limitless.wingsmusic.dto.user.UserDto;
 import cn.limitless.wingsmusic.dto.user.UserUpdateRequest;
 import cn.limitless.wingsmusic.entity.User;
@@ -32,4 +33,11 @@ public interface UserService extends UserDetailsService {
 
     String createToken(TokenCreateRequest tokenCreateRequest);
 
+    /**
+     * 新增用户方法
+     *
+     * @param userCreateRequest 接收创建用户数据模型
+     * @return 返回创建好后映射的穿梭对象
+     */
+    UserDto create(UserCreateRequest userCreateRequest);
 }

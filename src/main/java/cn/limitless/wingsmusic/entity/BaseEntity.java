@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ import java.util.Objects;
 @Setter
 @ToString(onlyExplicitlyIncluded = true)
 @MappedSuperclass
-public abstract class BaseEntity {
+public abstract class BaseEntity implements Serializable {
 
     @ToString.Include
     @Id

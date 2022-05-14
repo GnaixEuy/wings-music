@@ -27,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     public static final long EXPIRATION_TIME = 86400000;
+    public static final String CREATE_TOKEN_URL = "/token/**";
 
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
@@ -39,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-//                .antMatchers("/hello**")
+                .antMatchers(CREATE_TOKEN_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtAuthorizationFilter(super.authenticationManager(), userService))
@@ -53,6 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/swagger**/**")
                 .antMatchers("/webjars/**")
                 .antMatchers("/v3/**")
+                .antMatchers("/user/**")
                 .antMatchers("/doc.html");
     }
 

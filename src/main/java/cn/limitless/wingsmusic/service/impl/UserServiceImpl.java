@@ -2,6 +2,7 @@ package cn.limitless.wingsmusic.service.impl;
 
 import cn.limitless.wingsmusic.config.WebSecurityConfig;
 import cn.limitless.wingsmusic.dto.token.TokenCreateRequest;
+import cn.limitless.wingsmusic.dto.user.UserCreateRequest;
 import cn.limitless.wingsmusic.dto.user.UserDto;
 import cn.limitless.wingsmusic.dto.user.UserUpdateRequest;
 import cn.limitless.wingsmusic.entity.User;
@@ -43,6 +44,7 @@ public class UserServiceImpl implements UserService {
 
     private RedisCache redisCache;
 
+
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userOptional = this.userRepository.findByUsername(username);
@@ -65,10 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(String id, UserUpdateRequest userUpdateRequest) {
-        return this.userMapper
-                .toDto(this.userRepository.save(this.userMapper
-                        .updateEntity(this.userRepository.getById(id),
-                                userUpdateRequest)));
+        return this.userMapper.toDto(this.userRepository.save(this.userMapper.updateEntity(this.userRepository.getById(id), userUpdateRequest)));
     }
 
     @Override
@@ -88,12 +87,17 @@ public class UserServiceImpl implements UserService {
         if (!user.isAccountNonLocked()) {
             throw new BizException(ExceptionType.USER_LOCKED);
         }
-        String sign = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + WebSecurityConfig.EXPIRATION_TIME))
-                .sign(Algorithm.HMAC512(WebSecurityConfig.SECRET.getBytes()));
+        String sign = JWT.create().withSubject(user.getUsername()).withExpiresAt(new Date(System.currentTimeMillis() + WebSecurityConfig.EXPIRATION_TIME)).sign(Algorithm.HMAC512(WebSecurityConfig.SECRET.getBytes()));
         this.redisCache.setCacheObject(user.getUsername(), user, WebSecurityConfig.EXPIRATION_TIME, TimeUnit.MILLISECONDS);
         return sign;
+    }
+
+    @Override
+    public UserDto create(UserCreateRequest userCreateRequest) {
+        this.checkUserName(userCreateRequest.getUsername());
+        User entity = this.userMapper.createEntity(userCreateRequest);
+        entity.setPassword(this.passwordEncoder.encode(entity.getPassword()));
+        return this.userMapper.toDto(this.userRepository.save(entity));
     }
 
     @Autowired
@@ -112,6 +116,11 @@ public class UserServiceImpl implements UserService {
     @Lazy
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setRedisCache(RedisCache redisCache) {
+        this.redisCache = redisCache;
     }
 
     private UserDto isUserExist(Optional<User> optionalUser) {

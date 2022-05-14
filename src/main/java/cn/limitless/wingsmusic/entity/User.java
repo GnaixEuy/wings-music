@@ -2,6 +2,7 @@ package cn.limitless.wingsmusic.entity;
 
 import cn.limitless.wingsmusic.enums.Gender;
 import lombok.*;
+import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,7 +57,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "open_id", length = 32)
     private String openId;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
@@ -90,5 +91,22 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+        User user = (User) o;
+        return getId() != null && Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
