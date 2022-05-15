@@ -40,4 +40,11 @@ public interface UserService extends UserDetailsService {
      * @return 返回创建好后映射的穿梭对象
      */
     UserDto create(UserCreateRequest userCreateRequest);
+
+    /**
+     * 获取当前用户
+     *
+     * @return 当前用户的穿梭对象
+     */
+    UserDto getCurrentUser(String header);
 }

@@ -67,7 +67,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(String id, UserUpdateRequest userUpdateRequest) {
-        return this.userMapper.toDto(this.userRepository.save(this.userMapper.updateEntity(this.userRepository.getById(id), userUpdateRequest)));
+        System.out.println(id);
+        System.out.println(userUpdateRequest);
+        Optional<User> byId = this.userRepository.findById(id);
+        if (byId.isEmpty()) {
+            throw new BizException(ExceptionType.USER_NOT_FOUND);
+        }
+        return this.userMapper.toDto(this.userRepository.save(this.userMapper.updateEntity(byId.get(), userUpdateRequest)));
     }
 
     @Override
@@ -98,6 +104,11 @@ public class UserServiceImpl implements UserService {
         User entity = this.userMapper.createEntity(userCreateRequest);
         entity.setPassword(this.passwordEncoder.encode(entity.getPassword()));
         return this.userMapper.toDto(this.userRepository.save(entity));
+    }
+
+    @Override
+    public UserDto getCurrentUser(String header) {
+        return this.userMapper.toDto(this.redisCache.getCacheObject(header.replace("Bearer ", "")));
     }
 
     @Autowired
