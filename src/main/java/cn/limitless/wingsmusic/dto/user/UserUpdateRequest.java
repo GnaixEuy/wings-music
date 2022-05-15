@@ -1,5 +1,6 @@
 package cn.limitless.wingsmusic.dto.user;
 
+import cn.limitless.wingsmusic.enums.Gender;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -23,5 +24,5 @@ public class UserUpdateRequest {
 
     private String nickname;
 
-    private String gender;
+    private Gender gender;
 }
