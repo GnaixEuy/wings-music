@@ -52,7 +52,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             chain.doFilter(request, response);
             return;
         }
-        System.out.println(header);
         User user = this.redisCache.getCacheObject(header.replace("Bearer ", ""));
         if (ObjectUtil.isNull(user)) {
             throw new BizException(ExceptionType.UNAUTHORIZED);

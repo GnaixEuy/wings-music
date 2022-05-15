@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.security.RolesAllowed;
+
 /**
  * <img src="http://blog.GnaixEuy.cn/wp-content/uploads/2021/08/bug.jpeg"/>
  *
@@ -29,7 +31,8 @@ public class UserController {
     private UserMapper userMapper;
 
     @PostMapping(value = {""})
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
+    @RolesAllowed(value = {"ROLE_ADMIN"})
     ResponseResult<UserVo> create(@RequestBody @Validated UserCreateRequest userCreateRequest) {
         return ResponseResult.success(userMapper.toVo(userService.create(userCreateRequest)));
     }

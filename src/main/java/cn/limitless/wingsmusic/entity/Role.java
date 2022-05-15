@@ -3,10 +3,10 @@ package cn.limitless.wingsmusic.entity;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import javax.persistence.*;
-import java.util.LinkedHashSet;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author gnaixeuy
@@ -25,13 +25,6 @@ public class Role extends BaseEntity {
 
     @Column(name = "title", length = 128)
     private String title;
-
-    @ToString.Exclude
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
-    private Set<User> users = new LinkedHashSet<>();
 
     @Override
     public boolean equals(Object o) {
