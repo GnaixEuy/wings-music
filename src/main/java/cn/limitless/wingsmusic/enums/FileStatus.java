@@ -6,17 +6,17 @@ package cn.limitless.wingsmusic.enums;
  * <p>项目： wings-music </p>
  *
  * @author GnaixEuy
- * @date 2022/5/11
+ * @date 2022/5/17
  * @see <a href="https://github.com/GnaixEuy"> GnaixEuy的GitHub </a>
  */
-public enum Gender {
+public enum FileStatus {
     /**
-     * 性别枚举类
-     * FEMALE   女 0
-     * MALE     男 1
-     * UNKNOWN  未知 3
+     * 上传状态枚举类
+     * UPLOADING 上传中
+     * UPLOADED 上传结束
+     * CANCEL 上传取消
      */
-    FEMALE,
-    MALE,
-    UNKNOWN
+    UPLOADING,
+    UPLOADED,
+    CANCEL
 }
