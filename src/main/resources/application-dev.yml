@@ -23,3 +23,9 @@ spring:
         max-idle: 8
         max-active: 8
         max-wait: -1ms
+cos:
+  bucket:
+  region:
+  secret:
+    id:
+    key:

@@ -4,9 +4,12 @@ spring:
   profiles:
     active: dev
   mvc:
-    pathmatch:
+    path match:
       matching-strategy: ANT_PATH_MATCHER
 server:
   port: ${SERVER_PORT}
+
+
+
 
 

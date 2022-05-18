@@ -1,5 +1,6 @@
 package cn.limitless.wingsmusic.controller;
 
+import cn.limitless.wingsmusic.vo.ResponseResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
     @GetMapping(value = {""})
-    public String test() {
-        return "Hello";
+    public ResponseResult<String> test() {
+        return ResponseResult.success("开始项目吧! Wings of Music!");
     }
 
 }
