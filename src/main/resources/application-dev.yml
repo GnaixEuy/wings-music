@@ -24,8 +24,8 @@ spring:
         max-active: 8
         max-wait: -1ms
 cos:
-  bucket:
-  region:
+  bucket: ${COS_BUCKET}
+  region: ${COS_REGION}
   secret:
-    id:
-    key:
+    id: ${COS_SECRET_ID}
+    key: ${COS_SECRET_KEY}

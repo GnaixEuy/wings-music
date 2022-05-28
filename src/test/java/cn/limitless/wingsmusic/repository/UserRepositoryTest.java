@@ -18,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
  * @see <a href="https://github.com/GnaixEuy"> GnaixEuy的GitHub </a>
  */
 @SpringBootTest
-@ActiveProfiles("unit-test")
+@ActiveProfiles(value = "unit-test")
 class UserRepositoryTest {
 
     @Autowired

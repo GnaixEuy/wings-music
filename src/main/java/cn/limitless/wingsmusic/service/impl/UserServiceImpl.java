@@ -91,7 +91,10 @@ public class UserServiceImpl implements UserService {
         if (!user.isAccountNonLocked()) {
             throw new BizException(ExceptionType.USER_LOCKED);
         }
-        String sign = JWT.create().withSubject(user.getUsername()).withExpiresAt(new Date(System.currentTimeMillis() + WebSecurityConfig.EXPIRATION_TIME)).sign(Algorithm.HMAC512(WebSecurityConfig.SECRET.getBytes()));
+        String sign = JWT.create()
+                .withSubject(user.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + WebSecurityConfig.EXPIRATION_TIME))
+                .sign(Algorithm.HMAC512(WebSecurityConfig.SECRET.getBytes()));
         this.redisCache.setCacheObject(sign, user, WebSecurityConfig.EXPIRATION_TIME, TimeUnit.MILLISECONDS);
         return sign;
     }
